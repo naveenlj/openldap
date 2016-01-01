@@ -28,6 +28,10 @@ cd /tmp
 
 wget https://raw.githubusercontent.com/naveenlj/openldap/master/ldapconfig.sh
 
+chmod +x ldapconfig.sh
+
+bash ldapconfig.sh
+
 ldapadd -Y EXTERNAL -H ldapi:/// -f chrootpw.ldif
 
 ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
@@ -37,6 +41,15 @@ ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
 ldapadd -x -D cn=Manager,dc=nk,dc=solutions -W -f basedomain.ldif
 
 ldapadd -x -D cn=Manager,dc=server,dc=world -W -f ldapuser.ldif 
+
+wget https://raw.githubusercontent.com/naveenlj/openldap/master/ldap-user.sh
+
+chmod +x ldap-user.sh
+
+bash ldap-user.sh
+
+echo " ldap password : ldap "
+ldapadd -x -D cn=Manager,dc=nk,dc=solutions -W -f ldapuser.ldif
 
 cd ..
 
