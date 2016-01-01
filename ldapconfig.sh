@@ -64,3 +64,23 @@ ou: People
 dn: ou=Group,dc=nk,dc=solutions
 objectClass: organizationalUnit
 ou: Group' | tee basedomain.ldif
+
+echo '# create new user1
+# replace to your own domain name for "dc=***,dc=***" section
+dn: uid=cent,ou=People,dc=nk,dc=solutions
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: Cent
+sn: Linux
+userPassword: {SSHA}}WX3DcCjx4QBeeXGU0slw+I0K2FIFxIyo
+loginShell: /bin/bash
+uidNumber: 1000
+gidNumber: 1000
+homeDirectory: /home/cent
+
+dn: cn=cent,ou=Group,dc=nk,dc=solutions
+objectClass: posixGroup
+cn: Cent
+gidNumber: 1000
+memberUid: cent' | tee ldapuser.ldif
