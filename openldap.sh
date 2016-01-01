@@ -1,6 +1,19 @@
 #!/bin/bash
 
+set -x 
+
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+which wget >/dev/null 2>&1
+if  [ $? != 0 ]; then
+  yum install wget >/dev/null 2>&1
+fi
+
 yum -y install openldap-servers openldap-clients
+
 cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
 
 chown ldap. /var/lib/ldap/DB_CONFIG
@@ -9,85 +22,24 @@ chown ldap. /var/lib/ldap/DB_CONFIG
 
 chkconfig slapd on
 
-slappasswd
+# Downloda ldapconfig scripy
 
-echo "
-# vi chrootpw.ldif
-# specify the password generated above for "olcRootPW" section
+yum -y install wget 
 
-dn: olcDatabase={0}config,cn=config
-changetype: modify
-add: olcRootPW
-olcRootPW: {SSHA}xxxxxxxxxxxxxxxxxxxxxxxx "
+cd /tmp
+
+wget https://raw.githubusercontent.com/naveenlj/openldap/master/ldapconfig.sh
 
 ldapadd -Y EXTERNAL -H ldapi:/// -f chrootpw.ldif
 
-# generate directory manager's password
-
-slappasswd
-
-echo "
-# replace to your own domain name for "dc=***,dc=***" section
-
-# specify the password generated above for "olcRootPW" section
-
-dn: olcDatabase={1}monitor,cn=config
-changetype: modify
-replace: olcAccess
-olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth"
-  read by dn.base="cn=Manager,dc=server,dc=world" read by * none
-
-dn: olcDatabase={2}bdb,cn=config
-changetype: modify
-replace: olcSuffix
-olcSuffix: dc=server,dc=world
-
-dn: olcDatabase={2}bdb,cn=config
-changetype: modify
-replace: olcRootDN
-olcRootDN: cn=Manager,dc=server,dc=world
-
-dn: olcDatabase={2}bdb,cn=config
-changetype: modify
-add: olcRootPW
-olcRootPW: {SSHA}xxxxxxxxxxxxxxxxxxxxxxxx
-
-dn: olcDatabase={2}bdb,cn=config
-changetype: modify
-add: olcAccess
-olcAccess: {0}to attrs=userPassword,shadowLastChange by
-  dn="cn=Manager,dc=server,dc=world" write by anonymous auth by self write by * none
-olcAccess: {1}to dn.base="" by * read
-olcAccess: {2}to * by dn="cn=Manager,dc=server,dc=world" write by * read "
 
 ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
 
-echo "[root@dlp ~]# vi basedomain.ldif
-# replace to your own domain name for "dc=***,dc=***" section
+# Change dc,dc according to ldapconfig file
 
-dn: dc=server,dc=world
-objectClass: top
-objectClass: dcObject
-objectclass: organization
-o: Server World
-dc: Server
+ldapadd -x -D cn=Manager,dc=nk,dc=solutions -W -f basedomain.ldif
 
-dn: cn=Manager,dc=server,dc=world
-objectClass: organizationalRole
-cn: Manager
-description: Directory Manager
-
-dn: ou=People,dc=server,dc=world
-objectClass: organizationalUnit
-ou: People
-
-dn: ou=Group,dc=server,dc=world
-objectClass: organizationalUnit
-ou: Group "
-
-ldapadd -x -D cn=Manager,dc=server,dc=world -W -f basedomain.ldif
-
-# Enter LDAP Password: # directory manager's password
+cd ..
 
 
 
