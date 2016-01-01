@@ -3,7 +3,7 @@
 set -x 
 
 echo '# specify the password generated above for "olcRootPW" section
- dn: olcDatabase={0}config,cn=config
+dn: olcDatabase={0}config,cn=config
 changetype: modify
 add: olcRootPW
 olcRootPW: {SSHA}q2Y5Cm34ZaNanydqw8YrXoPlEoRmQtc1' | tee chrootpw.ldif
@@ -15,7 +15,7 @@ add: olcRootPW
 olcRootPW: {SSHA}q2Y5Cm34ZaNanydqw8YrXoPlEoRmQtc1
 echo "# replace to your own domain name for dc=***,dc=*** section
 # specify the password generated above for olcRootPW section
- dn: olcDatabase={1}monitor,cn=config
+dn: olcDatabase={1}monitor,cn=config
 changetype: modify
 replace: olcAccess
 olcAccess: {0}to * by dn.base=gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
