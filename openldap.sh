@@ -36,6 +36,8 @@ ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
 
 ldapadd -x -D cn=Manager,dc=nk,dc=solutions -W -f basedomain.ldif
 
+ldapadd -x -D cn=Manager,dc=server,dc=world -W -f ldapuser.ldif 
+
 cd ..
 
 
