@@ -26,6 +26,7 @@ ldapadd -Y EXTERNAL -H ldapi:/// -f chrootpw.ldif
 
 slappasswd
 
+echo "
 # replace to your own domain name for "dc=***,dc=***" section
 
 # specify the password generated above for "olcRootPW" section
@@ -57,22 +58,11 @@ add: olcAccess
 olcAccess: {0}to attrs=userPassword,shadowLastChange by
   dn="cn=Manager,dc=server,dc=world" write by anonymous auth by self write by * none
 olcAccess: {1}to dn.base="" by * read
-olcAccess: {2}to * by dn="cn=Manager,dc=server,dc=world" write by * read
+olcAccess: {2}to * by dn="cn=Manager,dc=server,dc=world" write by * read "
 
-[root@dlp ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
+ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
 
-SASL/EXTERNAL authentication started
-SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
-SASL SSF: 0
-modifying entry "olcDatabase={1}monitor,cn=config"
-
-modifying entry "olcDatabase={2}bdb,cn=config"
-
-modifying entry "olcDatabase={2}bdb,cn=config"
-
-modifying entry "olcDatabase={2}bdb,cn=config"
-
-[root@dlp ~]# vi basedomain.ldif
+echo "[root@dlp ~]# vi basedomain.ldif
 # replace to your own domain name for "dc=***,dc=***" section
 
 dn: dc=server,dc=world
@@ -93,7 +83,7 @@ ou: People
 
 dn: ou=Group,dc=server,dc=world
 objectClass: organizationalUnit
-ou: Group
+ou: Group "
 
 ldapadd -x -D cn=Manager,dc=server,dc=world -W -f basedomain.ldif
 
