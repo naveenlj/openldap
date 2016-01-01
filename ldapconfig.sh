@@ -1,6 +1,6 @@
+#/bin/bash
 
-
-
+set -x 
 
 echo "# specify the password generated above for "olcRootPW" section
  dn: olcDatabase={0}config,cn=config
