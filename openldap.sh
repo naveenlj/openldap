@@ -22,16 +22,13 @@ chown ldap. /var/lib/ldap/DB_CONFIG
 
 chkconfig slapd on
 
-# Downloda ldapconfig scripy
-
-yum -y install wget 
+# Downloda ldapconfig script
 
 cd /tmp
 
 wget https://raw.githubusercontent.com/naveenlj/openldap/master/ldapconfig.sh
 
 ldapadd -Y EXTERNAL -H ldapi:/// -f chrootpw.ldif
-
 
 ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
 
